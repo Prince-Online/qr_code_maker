@@ -25,6 +25,8 @@
             color: #ff4500;
             text-shadow: 2px 2px 8px #000000;
             margin-bottom: 20px;
+            font-size: 22px;
+            text-align: center;
         }
         input[type="number"] {
             padding: 12px;
@@ -56,7 +58,7 @@
             transform: scale(1.1);
             box-shadow: 0 0 15px #00ff88;
         }
-        #qrcode {
+        #qrcode , img{
             margin: 20px 0;
             padding: 15px;
             background: rgba(0, 0, 0, 0.5);
@@ -93,7 +95,7 @@
     </style>
 </head>
 <body>
-    <h1>Next Move UPI Payment</h1>
+    <h1>Gaming QR Codes</h1>
     <input type="number" id="amountInput" placeholder="Enter Amount" min="0" step="0.01">
     <button onclick="generateQR()">Generate QR Code</button>
     <div id="qrcode"></div>
@@ -130,7 +132,17 @@
 
         function downloadQR() {
             const amount = document.getElementById('amountInput').value;
-            const qrCodeElement = document.getElementById('qrcode');
+            if (!qrCodeInstance) {
+                alert('Please generate the QR code first!');
+                return;
+            }
+
+            const qrCanvas = document.querySelector('#qrcode canvas');
+            if (!qrCanvas) {
+                alert('QR code not generated properly!');
+                return;
+            }
+
             const qrContainer = document.createElement('div');
             qrContainer.className = 'qr-container';
             const companyName = document.createElement('h2');
@@ -142,7 +154,12 @@
             qrContainer.appendChild(companyName);
             qrContainer.appendChild(amountText);
             qrContainer.appendChild(upiIdText);
-            qrContainer.appendChild(qrCodeElement.cloneNode(true));
+
+            const qrImage = document.createElement('img');
+            qrImage.src = qrCanvas.toDataURL('image/png');
+            qrImage.style.width = '250px';
+            qrImage.style.height = '250px';
+            qrContainer.appendChild(qrImage);
 
             document.body.appendChild(qrContainer);
             html2canvas(qrContainer).then(canvas => {
